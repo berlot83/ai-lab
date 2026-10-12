@@ -1,5 +1,6 @@
 training_data = [(0.0, 1.0), (1.0, 3.0), (3.0, 7.0)]
 validation_data = [(0.5, 2.0), (1.5, 4.0), (2.5, 6.0)]
+test_data = [(0.25, 1.5), (2.0, 5.0)]
 
 print("Traingin data:", training_data)
 print("Validation data: ", validation_data)
@@ -20,6 +21,13 @@ def calculate_mse(data, weight, bias):
     for x, expected in data:
         prediction = predict(x, weight, bias)
         total_error += (prediction - expected) ** 2
+    return total_error / len(data)
+
+def calculate_mae(data, weight, bias):
+    total_error = 0.0
+    for x, expected in data:
+        prediction = predict(x, weight, bias)
+        total_error += abs(prediction - expected)
     return total_error / len(data)
 
 training_error = calculate_mse(training_data, weight, bias)
@@ -54,4 +62,10 @@ for epoch in range(epochs):
 
 print(f"Final weight: {weight:.4f}")
 print(f"Final bias: {bias:.4f}")
+
+test_error = calculate_mse(test_data, weight, bias)
+print(f"Test MSE:{test_error:.4f}")
+
+validation_mae = calculate_mae(validation_data, weight, bias)
+print(f"Validation MAE: {validation_mae:.4f}")
     
