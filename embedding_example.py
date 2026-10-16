@@ -51,11 +51,9 @@ def embeddings(chunks: list[str]) -> list[tuple[str, list[float]]]:
     for chunk in chunks:
         vector = generate_embedding("search_document: " + chunk)
         embedded_chunks.append((chunk, vector))
-        print(chunk)
     return embedded_chunks
 
 embedded_chunks = embeddings(document_chunks)
-print(len(embedded_chunks))
 
 question_vector = generate_embedding("search_query: " + question)
 
