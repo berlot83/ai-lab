@@ -3,6 +3,14 @@ import math
 from urllib.request import Request, urlopen
 from http.client import HTTPResponse
 
+document_chunks = [
+"The service retries up to 3 times on transient errors.",
+"The default timeout is 30 seconds.",
+"Authentication errors must not be retried."
+]
+
+question = "What is the default waiting time?"
+
 def generate_embedding(text: str) ->  list[float]:
     payload: dict[str, str] = {
         "model": "nomic-embed-text",
@@ -38,6 +46,24 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
         raise ValueError("La similitud coseno no está definida para vectores de norma cero")
     return product / (norm_a * norm_b)
 
-vector_a = generate_embedding("El timeout predeterminado es de 30 segundos.")
-vector_b = generate_embedding("El timeout predeterminado es de 30 segundos.")
-print(f"Cosen similarity: {cosine_similarity(vector_a, vector_b)}")
+def embeddings(chunks: list[str]) -> list[tuple[str, list[float]]]:
+    embedded_chunks: list[tuple[str, list[float]]] = []
+    for chunk in chunks:
+        vector = generate_embedding("search_document: " + chunk)
+        embedded_chunks.append((chunk, vector))
+        print(chunk)
+    return embedded_chunks
+
+embedded_chunks = embeddings(document_chunks)
+print(len(embedded_chunks))
+
+question_vector = generate_embedding("search_query: " + question)
+
+scored_chunks: list[tuple[str, float]] = []
+for (chunk, vector) in embedded_chunks:
+    v: float = cosine_similarity(question_vector, vector)
+    scored_chunks.append((chunk, v))
+scored_chunks.sort(key=lambda item: item[1], reverse=True)
+
+best_chunk, best_score = scored_chunks[0]
+print(f"Fragmento recuperado: {best_chunk}")
