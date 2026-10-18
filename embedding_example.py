@@ -9,7 +9,7 @@ document_chunks = [
 "Authentication errors must not be retried."
 ]
 
-question = "What is the default waiting time?"
+question = "Should the service retry when authentication fails?"
 
 def generate_embedding(text: str) ->  list[float]:
     payload: dict[str, str] = {
@@ -65,3 +65,26 @@ scored_chunks.sort(key=lambda item: item[1], reverse=True)
 
 best_chunk, best_score = scored_chunks[0]
 print(f"Fragmento recuperado: {best_chunk}")
+
+context = best_chunk
+prompt = f"""Answer the question using only the documentation below.
+If the documentation does not contain the answer, state what information is missing.
+Documentation:
+{context}
+Question:
+{question}
+"""
+print(prompt)
+
+payload: dict[str, str | bool] = {
+    "model": "mistral:latest",
+    "prompt": prompt,
+    "stream": False
+}
+
+request_body: bytes = json.dumps(payload).encode("utf-8")
+request: Request = Request(url = "http://localhost:11434/api/generate", data = request_body, headers = {"Content-Type": "application/json"}, method = "POST")
+response: HTTPResponse
+with (urlopen(request, timeout = 120)) as response:
+    result = json.loads(response.read().decode("utf-8"))
+    print("Respuesta:", result["response"])
