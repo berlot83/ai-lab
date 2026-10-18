@@ -9,7 +9,7 @@ document_chunks = [
 "Authentication errors must not be retried."
 ]
 
-question = "Should the service retry when authentication fails?"
+question = "What is the default timeout, and should authentication errors be retried?"
 
 def generate_embedding(text: str) ->  list[float]:
     payload: dict[str, str] = {
@@ -63,10 +63,18 @@ for (chunk, vector) in embedded_chunks:
     scored_chunks.append((chunk, v))
 scored_chunks.sort(key=lambda item: item[1], reverse=True)
 
-best_chunk, best_score = scored_chunks[0]
-print(f"Fragmento recuperado: {best_chunk}")
+# # best_chunk, best_score = scored_chunks[0]
+# print(f"Fragmento recuperado: {best_chunk}")
 
-context = best_chunk
+# context = best_chunk
+
+selected_chunks = scored_chunks[0:2]
+context_chunks: list[str] = []
+for (chunk, score) in selected_chunks:
+    context_chunks.append(chunk)
+    print(f"Similitud: {score:.4f} | Fragmento: {chunk}")
+context = "\n".join(context_chunks)
+
 prompt = f"""Answer the question using only the documentation below.
 If the documentation does not contain the answer, state what information is missing.
 Documentation:
