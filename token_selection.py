@@ -42,3 +42,22 @@ for index, probability in enumerate(probabilities):
 print(f"Best probability: {best_probability}, best index: {best_index}")
 print(tokens[best_index])
 
+
+def cumulative_probability(probabilities: list[float]) -> float:
+    probability: float = 0.0
+    for index, prob in enumerate(probabilities):
+        probability += prob
+        print(f"Index: {index}, sum probability: {probability}, nominal probability: {prob}")
+    return probability
+
+print(cumulative_probability(probabilities))
+
+def select_token_index(probabilities: list[float], draw) -> int:
+    cumulative: float = 0.0
+    for index, probability in enumerate(probabilities):
+        cumulative += probability
+        if draw < cumulative:
+            return index
+        
+selected_index = select_token_index(probabilities, 0.29)
+print(f"selected_token: {tokens[selected_index]}")
