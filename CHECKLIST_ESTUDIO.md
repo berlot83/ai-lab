@@ -3,7 +3,7 @@
 **Actualizado:** 28 de octubre de 2026.  
 **Objetivo:** identificar qué trabajamos, qué conviene repasar y qué falta, separando el temario NVIDIA de nuestras prácticas complementarias.
 
-El ejercicio de selección del próximo token está terminado para su alcance didáctico. El siguiente paso práctico es comparar configuraciones de generación con Mistral. La arquitectura Transformer fue explicada conceptualmente; no construimos ni entrenamos un Transformer.
+Los ejercicios de selección del próximo token y exploración de temperatura con Mistral real están terminados para su alcance didáctico. La comparación controlada con temperaturas fijas queda como profundización opcional. El próximo bloque es evaluar el RAG separando recuperación y generación. La arquitectura Transformer fue explicada conceptualmente; no construimos ni entrenamos un Transformer.
 
 ## Cómo usar este checklist
 
@@ -64,7 +64,7 @@ Los nombres siguientes son **etiquetas abreviadas**, no una transcripción. Los 
 | EX04 | Evaluación tecnológica | Visto parcial | Se discutieron alternativas de modelos y ejecución local. Falta una comparación documentada con criterios y mediciones. |
 | EX05 | Datos humanos y RLHF | Pendiente | No hay ejercicio registrado de feedback humano o alineación. |
 | EX06 | Benchmarks y refinamiento | Pendiente | Falta un conjunto de pruebas con criterios de aceptación y comparación de versiones. |
-| EX07 | Experimentos de modelos/pipelines | Practicado parcial | Cambiamos documentos del RAG y comprobamos respuestas; probamos temperatura. Falta consolidar un protocolo reproducible. |
+| EX07 | Experimentos de modelos/pipelines | Practicado parcial | Cambiamos documentos del RAG y ejecutamos Mistral con diez temperaturas aleatorias y prompt fijo. Fue una exploración, no una comparación controlada; falta un protocolo reproducible. |
 
 ### Desarrollo de software — 24%
 
@@ -151,13 +151,27 @@ No programamos el cálculo de logits a partir del contexto ni entrenamos un Tran
 - [x] **Repasado:** renormalizar 0.40 y 0.10 a 0.80 y 0.20 — 28/10.
 - [x] **Practicado:** renormalización manteniendo las posiciones originales — 28/10.
 - [x] **Practicado:** sampling con probabilidades filtradas — 28/10; salida final: 7 grises y 3 azules.
+- [x] **Repasado:** Mistral calcula logits a partir del contexto; en el ejercicio toy los logits estaban escritos a mano — 28/10.
 - [ ] **Repaso futuro breve:** explicar el propósito de cada etapa sin depender del código.
 
 **Cierre de alcance:** `token_selection.py` completó el ejercicio didáctico. No continuar agregando funcionalidades por inercia. Las pruebas mostradas no constituyen validación de producción para cualquier entrada, extremos numéricos o parámetros inválidos.
 
+### Temperatura con Mistral real
+
+**Complementario aplicado a experimentación:** `temperature_comparison.py` conecta el mecanismo estudiado con una generación real mediante Ollama y `mistral:latest`.
+
+- [x] **Practicado:** enviar el mismo prompt a Mistral con `options.temperature`.
+- [x] **Practicado:** encapsular la llamada HTTP y devolver el texto generado.
+- [x] **Practicado exploratorio:** ejecutar diez temperaturas aleatorias producidas por `random.random()` en el intervalo `[0, 1)`, registrando cada valor junto a su respuesta.
+- [x] **Observado, no concluido:** cinco temperaturas bajas, entre aproximadamente 0.0066 y 0.1562, produjeron los mismos nombres en esa ejecución.
+- [x] **Interpretado:** una tanda pequeña y aleatoria no demuestra una relación general ni permite elegir una temperatura mejor.
+- [ ] **Opcional:** repetir con temperaturas fijas `0.3` y `1.0`, varias corridas por valor y un criterio de comparación definido.
+
+**Cierre de alcance:** el experimento exploratorio quedó terminado. No se marca como comparación controlada ni como dominio amplio del objetivo NVIDIA.
+
 ### Herramientas y ampliaciones pendientes
 
-- [ ] **Complementario aplicado a NVIDIA:** comparar configuraciones reales de Mistral manteniendo fijo el prompt.
+- [ ] **Complementario opcional aplicado a NVIDIA:** comparar configuraciones fijas de Mistral manteniendo el prompt y el número de repeticiones controlados.
 - [ ] **Complementario aplicado a NVIDIA:** NumPy y un framework de redes neuronales en ejercicios pequeños.
 - [ ] **Complementario aplicado a NVIDIA:** gradientes, backpropagation, optimizadores, learning rate, épocas y batches.
 - [ ] **NVIDIA · Lectura sugerida:** LoRA, TensorRT, NeMo y Triton; estudiar su función y relación con los objetivos, no memorizar catálogos.
@@ -169,10 +183,10 @@ La referencia a lecturas sugeridas se apoya en la [lista oficial de recursos](ht
 
 ## 3 Próximos pasos acordados
 
-1. Comparar generación con Mistral usando un mismo prompt y configuraciones controladas.
-2. Evaluar el RAG con preguntas y respuestas esperadas, separando errores de recuperación y generación.
-3. Ampliar cobertura hacia datos, entrenamiento, evaluación, despliegue e IA confiable.
-4. Intercalar repasos breves de ML y Transformers sin reiniciar todo el recorrido.
+1. Evaluar el RAG con preguntas y respuestas esperadas, separando errores de recuperación y generación.
+2. Intercalar repasos breves de ML, Transformers y selección de tokens sin reiniciar todo el recorrido.
+3. Opcionalmente, convertir la exploración de temperatura en una comparación controlada con valores fijos y repeticiones.
+4. Ampliar cobertura hacia datos, entrenamiento, evaluación, despliegue e IA confiable.
 5. Revisar nuevamente los objetivos oficiales antes de programar el examen.
 
 ## 4 Registro de repaso reutilizable
@@ -185,6 +199,7 @@ Hacer una pregunta por vez y pedir la explicación antes de mostrar la respuesta
 | 28/10/2026 | Top-k y top-p | k=2 excluye el tercero; p=0.80 conserva 60%+30% | Recordar ordenar primero por probabilidad | Distribución donde k y p elijan cantidades diferentes |
 | 28/10/2026 | Renormalización | 0.40/0.50=0.80; 0.10/0.50=0.20 | Ubicar en código dónde se calculó el denominador | Explicar `probability / cumulative` |
 | 28/10/2026 | Pipeline didáctico | Ejecutó filtrado, renormalización y sampling integrado | Revisión espaciada de su propósito | Relacionarlo con una configuración de Mistral |
+| 28/10/2026 | Mistral y temperatura | Ejecutó diez temperaturas aleatorias con prompt fijo y vinculó cada valor con su respuesta | Distinguir exploración de comparación controlada; una tanda no permite concluir | Evaluación RAG; comparación fija queda opcional |
 | | | | | |
 
 ## 5 Regla para actualizar este archivo
