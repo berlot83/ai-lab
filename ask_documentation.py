@@ -2,7 +2,7 @@ import json
 from urllib.request import Request, urlopen
 from http.client import HTTPResponse
 
-question = "Cuántos segundos espera el servicio entre reintentos?"
+question = "¿Cuál es el tiempo máximo total permitido para todos los reintentos?"
 
 def generate_embedding(text: str) ->  list[float]:
     payload: dict[str, str] = {
