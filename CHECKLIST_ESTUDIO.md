@@ -1,9 +1,10 @@
 # Checklist de estudio de IA y NCA GENL
 
-**Actualizado:** 28 de octubre de 2026.  
+**Actualizado:** 6 de noviembre de 2026.
+
 **Objetivo:** identificar qué trabajamos, qué conviene repasar y qué falta, separando el temario NVIDIA de nuestras prácticas complementarias.
 
-Los ejercicios de selección del próximo token y exploración de temperatura con Mistral real están terminados para su alcance didáctico. La comparación controlada con temperaturas fijas queda como profundización opcional. El próximo bloque es evaluar el RAG separando recuperación y generación. La arquitectura Transformer fue explicada conceptualmente; no construimos ni entrenamos un Transformer.
+Los ejercicios de selección del próximo token y exploración de temperatura con Mistral real están terminados para su alcance didáctico. La comparación controlada con temperaturas fijas queda como profundización opcional. La evaluación del RAG ya se trabajó con casos conceptuales, separando recuperación y generación. El próximo paso es llevar esa evaluación a una comparación controlada de top-k = 2 frente a top-k = 5; todavía no está implementada ni ejecutada. La arquitectura Transformer fue explicada conceptualmente; no construimos ni entrenamos un Transformer.
 
 ## Cómo usar este checklist
 
@@ -63,8 +64,8 @@ Los nombres siguientes son **etiquetas abreviadas**, no una transcripción. Los 
 | EX03 | Pruebas hardware/software LLM | Practicado parcial | Pruebas funcionales manuales del RAG y de selección de tokens. Faltan pruebas repetibles y mediciones de recursos. |
 | EX04 | Evaluación tecnológica | Visto parcial | Se discutieron alternativas de modelos y ejecución local. Falta una comparación documentada con criterios y mediciones. |
 | EX05 | Datos humanos y RLHF | Pendiente | No hay ejercicio registrado de feedback humano o alineación. |
-| EX06 | Benchmarks y refinamiento | Pendiente | Falta un conjunto de pruebas con criterios de aceptación y comparación de versiones. |
-| EX07 | Experimentos de modelos/pipelines | Practicado parcial | Cambiamos documentos del RAG y ejecutamos Mistral con diez temperaturas aleatorias y prompt fijo. Fue una exploración, no una comparación controlada; falta un protocolo reproducible. |
+| EX06 | Benchmarks y refinamiento | Visto parcial | El 05/11 trabajamos métricas de recuperación y evaluación de respuestas con casos conceptuales. Falta implementar un conjunto de pruebas con criterios de aceptación y comparación de versiones. |
+| EX07 | Experimentos de modelos/pipelines | Practicado parcial | Cambiamos documentos del RAG y ejecutamos Mistral con diez temperaturas aleatorias y prompt fijo. Fue una exploración, no una comparación controlada. El 05/11 discutimos comparación justa y límites de muestras pequeñas; falta implementar y ejecutar el protocolo de top-k = 2 frente a 5. |
 
 ### Desarrollo de software — 24%
 
@@ -114,7 +115,12 @@ No se asigna una fecha exacta de repaso completado a los primeros conceptos: el 
 - [x] **Practicado parcial:** preguntas negativas, información ausente y documentación actualizada.
 - [x] **Visto:** límites de contexto y lost in the middle.
 - [x] **Visto:** RAG frente a fine-tuning.
-- [ ] **Pendiente:** evaluar recuperación y generación por separado con respuestas esperadas.
+- [x] **Visto con casos conceptuales — 05/11:** Hit@k, Recall@k y Precision@k; distinguir encontrar al menos un fragmento relevante, cubrir los relevantes y la proporción de relevantes entre los recuperados.
+- [x] **Visto con casos conceptuales — 05/11:** evaluar corrección de la respuesta y grounding (respaldo en el contexto) por separado, incluyendo abstención ante evidencia insuficiente.
+- [x] **Visto con casos conceptuales — 05/11:** diagnosticar fallos siguiendo recuperación → contexto enviado al prompt → generación.
+- [x] **Visto — 05/11:** comparación justa de configuraciones y límites de las conclusiones con una muestra pequeña.
+- [ ] **Pendiente de implementación y ejecución:** comparar top-k = 2 frente a top-k = 5 con las mismas preguntas, documentos, criterios de relevancia y respuestas esperadas; mantener constantes las demás condiciones.
+- [ ] **Pendiente:** registrar métricas de recuperación y evaluar generación por separado en esa comparación del RAG real.
 - [ ] **Pendiente:** pruebas automatizadas, regresiones y métricas por versión del pipeline.
 
 Qdrant, BGE-M3, Mistral y Ollama son elecciones del laboratorio. No se presentan como productos exigidos específicamente por NVIDIA.
@@ -183,7 +189,7 @@ La referencia a lecturas sugeridas se apoya en la [lista oficial de recursos](ht
 
 ## 3 Próximos pasos acordados
 
-1. Evaluar el RAG con preguntas y respuestas esperadas, separando errores de recuperación y generación.
+1. Preparar y ejecutar la comparación del RAG con top-k = 2 frente a top-k = 5: usar las mismas preguntas, relevancias y respuestas esperadas; registrar Hit@k, Recall@k y Precision@k y evaluar corrección y grounding por separado. El diseño se discutió conceptualmente; la implementación y la ejecución siguen pendientes.
 2. Intercalar repasos breves de ML, Transformers y selección de tokens sin reiniciar todo el recorrido.
 3. Opcionalmente, convertir la exploración de temperatura en una comparación controlada con valores fijos y repeticiones.
 4. Ampliar cobertura hacia datos, entrenamiento, evaluación, despliegue e IA confiable.
@@ -200,6 +206,9 @@ Hacer una pregunta por vez y pedir la explicación antes de mostrar la respuesta
 | 28/10/2026 | Renormalización | 0.40/0.50=0.80; 0.10/0.50=0.20 | Ubicar en código dónde se calculó el denominador | Explicar `probability / cumulative` |
 | 28/10/2026 | Pipeline didáctico | Ejecutó filtrado, renormalización y sampling integrado | Revisión espaciada de su propósito | Relacionarlo con una configuración de Mistral |
 | 28/10/2026 | Mistral y temperatura | Ejecutó diez temperaturas aleatorias con prompt fijo y vinculó cada valor con su respuesta | Distinguir exploración de comparación controlada; una tanda no permite concluir | Evaluación RAG; comparación fija queda opcional |
+| 05/11/2026 | Métricas de recuperación | Trabajamos casos conceptuales de Hit@k, Recall@k y Precision@k y sus diferencias | Comprobar su aplicación a resultados del RAG real | Calcular las tres métricas para top-k = 2 y 5 sobre las mismas preguntas |
+| 05/11/2026 | Evaluación y diagnóstico del RAG | Trabajamos corrección, grounding y abstención; diagnóstico de recuperación → contexto del prompt → generación | Aplicar los criterios de forma consistente en una evaluación registrada | Revisar fragmentos recuperados, contexto enviado y respuesta por separado |
+| 05/11/2026 | Comparación de configuraciones | Discutimos comparación justa, muestras pequeñas y top-k = 2 frente a 5 | No confundir el diseño conceptual con un experimento ejecutado ni generalizar desde pocos casos | Implementar y ejecutar la comparación manteniendo las demás condiciones constantes |
 | | | | | |
 
 ## 5 Regla para actualizar este archivo

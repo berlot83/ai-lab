@@ -24,6 +24,12 @@ DOCUMENTS: list[tuple[int, str]] = [
     (2, "El timeout predeterminado es de 30 segundos."),
     (3, "Los errores de autenticación no deben reintentarse."),
     (4, "Ante errores transitorios, el servicio espera 5 segundos entre reintentos."),
+    (5, "Los errores de validación no deben reintentarse porque requieren corregir los datos enviados."),
+    (6, "Las respuestas HTTP 429 pueden reintentarse respetando el tiempo indicado en el encabezado Retry-After, si está presente."),
+    (7, "Las respuestas HTTP 503 se consideran errores transitorios y pueden reintentarse."),
+    (8, "Cada intento de una solicitud debe registrarse con su número de intento y el resultado obtenido."),
+    (9, "Cuando se agotan los reintentos, el servicio debe registrar el error y notificar al sistema que originó la solicitud."),
+    (10, "El identificador de correlación debe mantenerse igual durante todos los intentos de una misma solicitud.")
 ]
 
 

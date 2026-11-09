@@ -2,7 +2,7 @@ import json
 from urllib.request import Request, urlopen
 from http.client import HTTPResponse
 
-question = "¿Cuál es el tiempo máximo total permitido para todos los reintentos?"
+question = "¿Cuántos reintentos se permiten ante errores transitorios, cuánto se espera entre ellos y qué ocurre cuando se agotan?"
 
 def generate_embedding(text: str) ->  list[float]:
     payload: dict[str, str] = {
@@ -24,7 +24,7 @@ def retrieve_chunks(_question: str) -> str:
     question_vector = generate_embedding(_question)
     query_payload = {
         "query": question_vector,
-        "limit": 2,
+        "limit": 5,
         "with_payload": True
     }
     query_body: bytes = json.dumps(query_payload).encode("utf-8")
